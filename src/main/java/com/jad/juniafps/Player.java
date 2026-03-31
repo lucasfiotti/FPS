@@ -5,12 +5,15 @@ import java.awt.*;
 public class Player {
     static final int MAX_DEGREES = 360;
     private static int playerStep = 10;
-    private int direction = 0;
+    private final Map map;
+    private int direction;
     private Point position;
 
-    public Player(Point position, int direction) {
+
+    public Player(Point position, int direction, Map map) {
         this.position = position;
         this.direction = direction;
+        this.map = map;
     }
 
 
@@ -56,7 +59,7 @@ public class Player {
         final int newX = (int) (this.position.x + Player.playerStep * Math.sin(angleRadians));
         final int newY = (int) (this.position.y - Player.playerStep * Math.cos(angleRadians));
 
-        this.position = new Point(newX, newY);
+        this.move(new Point(newX, newY));
     }
 
     private void moveLeft() {
@@ -64,7 +67,7 @@ public class Player {
         final int newX = (int) (this.position.x - Player.playerStep * Math.sin(angleRadians));
         final int newY = (int) (this.position.y + Player.playerStep * Math.cos(angleRadians));
 
-        this.position = new Point(newX, newY);
+        this.move(new Point(newX, newY));
     }
 
     private void moveBackward() {
@@ -72,7 +75,7 @@ public class Player {
         final int newX = (int) (this.position.x + Player.playerStep * Math.cos(angleRadians));
         final int newY = (int) (this.position.y + Player.playerStep * Math.sin(angleRadians));
 
-        this.position = new Point(newX, newY);
+        this.move(new Point(newX, newY));
     }
 
     private void moveForward() {
@@ -80,11 +83,15 @@ public class Player {
         final int newX = (int) (this.position.x - Player.playerStep * Math.cos(angleRadians));
         final int newY = (int) (this.position.y - Player.playerStep * Math.sin(angleRadians));
 
-        this.position = new Point(newX, newY);
+        this.move(new Point(newX, newY));
 
     }
 
     public Point getPosition() {
         return this.position;
+    }
+
+    private void move(final Point point) {
+        if (this.map.isEmpty(point)) this.position = point;
     }
 }
