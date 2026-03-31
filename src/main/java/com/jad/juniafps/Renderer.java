@@ -22,21 +22,22 @@ public class Renderer {
 
     private double[] getPerceivedHeights(final Point origin, final int direction, final Map map) {
         final double[] perceivedHeights = new double[RenderUtils.SCREEN_WIDTH];
-        double angle = direction - RenderUtils.VIEWING_ANGLE;
+        double angle = direction - RenderUtils.VIEWING_ANGLE / 2;
         final double angleStep = RenderUtils.VIEWING_ANGLE / RenderUtils.SCREEN_WIDTH;
         for (int column = 0; column < RenderUtils.SCREEN_WIDTH; column++, angle += angleStep) {
-            perceivedHeights[column] = this.getPerceivedHeight(origin, angle, map);
+            perceivedHeights[column] = this.getPerceivedHeight(origin, angle, direction, map);
         }
         return perceivedHeights;
     }
 
-    private double getPerceivedHeight(final Point origin, final double angle, final Map map) {
+    private double getPerceivedHeight(final Point origin, final double angle, final int direction, final Map map) {
         final double radianAngle = RenderUtils.degreesToRadians(angle);
         final Point end = new Point((int) (origin.x - RenderUtils.VIEWING_DISTANCE * Math.cos(radianAngle)), (int) (origin.y - RenderUtils.VIEWING_DISTANCE * Math.sin(radianAngle)));
         final Point obstacle = this.getFromTo(map, origin, end);
         if (obstacle != null) {
             final double realDistance = Math.sqrt(Math.pow(origin.x - obstacle.x, 2) + Math.pow(origin.y - obstacle.y, 2));
-            return RenderUtils.SCREEN_DISTANCE * RenderUtils.WALL_HEIGHT / realDistance;
+            final double eyeFishCorrection = Math.cos(RenderUtils.degreesToRadians(direction - angle));
+            return RenderUtils.SCREEN_DISTANCE * RenderUtils.WALL_HEIGHT / realDistance / eyeFishCorrection;
         }
         return 0.0;
     }
